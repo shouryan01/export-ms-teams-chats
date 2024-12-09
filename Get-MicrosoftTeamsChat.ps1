@@ -171,6 +171,7 @@ foreach ($chat in $chats) {
         $file = Join-Path -Path $exportFolder -ChildPath "$name.html"
 
         if ($chat.chatType -ne "oneOnOne") {
+            Write-Verbose "Chat is not oneOnOne, appending hash to end"
             # add hash of chatId in case multiple chats have the same name or members
             $chatIdStream = [IO.MemoryStream]::new([byte[]][char[]]$chat.id)
             $chatIdShortHash = (Get-FileHash -InputStream $chatIdStream -Algorithm SHA256).Hash.Substring(0,8)
