@@ -8,7 +8,13 @@
         This script reads the Microsoft Graph API and exports of chat history into HTML files in a location you specify.
 
     .PARAMETER exportFolder
+        If specified, only group chats this string (exact match) will be exported
+
+    .PARAMETER toExport
         Export location of where the HTML files will be saved. For example, "D:\ExportedHTML\"
+
+    .PARAMETER avoidOverwrite
+        If a chat with the same file name already exists, this will create the new file with a number at the end instead (such as (1))
 
     .PARAMETER clientId
         The client id of the Azure AD App Registration.
@@ -29,6 +35,7 @@
 Param(
     [Parameter(Mandatory = $false, HelpMessage = "Export location of where the HTML files will be saved.")] [string] $exportFolder = "out",
     [Parameter(Mandatory = $false, HelpMessage = "If specified, only group chats this string (exact match) will be exported")] [string[]] $toExport = $null,
+    [Parameter(Mandatory = $false, HelpMessage = "If a chat with the same file name already exists, this will create the new file with a number at the end instead (such as (1))")] [switch] $avoidOverwrite,
     [Parameter(Mandatory = $false, HelpMessage = "The client id of the Azure AD App Registration")] [string] $clientId = "7f586887-37d3-4d1f-89cf-153c7d1bbe54",
     [Parameter(Mandatory = $false, HelpMessage = "The tenant id of the Azure AD environment the user logs into")] [string] $tenantId = "organizations"
 )
@@ -176,6 +183,19 @@ foreach ($chat in $chats) {
             $chatIdStream = [IO.MemoryStream]::new([byte[]][char[]]$chat.id)
             $chatIdShortHash = (Get-FileHash -InputStream $chatIdStream -Algorithm SHA256).Hash.Substring(0,8)
             $file = $file.Replace(".html", ( " ($chatIdShortHash).html"))
+        }
+
+        if ($avoidOverwrite -eq $true) {
+            Write-Verbose "Avoid overwrite enabled, appending counter if file path is not unique"
+            $uniqueFile = $file
+            $counter = 1
+
+            while (Test-Path $uniqueFile) {
+                $uniqueFile = $file.Replace(".html", ( " ($counter).html"))
+                $counter++
+            }
+
+            $file = $uniqueFile
         }
 
         Write-Host -ForegroundColor Green "Exporting $file..."
