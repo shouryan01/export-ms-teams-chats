@@ -50,7 +50,7 @@ irm https://raw.githubusercontent.com/evenevan/export-ms-teams-chats/main/ps.ps1
 <details>
   <summary>Legacy/Alternate Method</summary>
 
-  **Only use this method if the above doesn't work for you. This is almost certainly more difficult.**
+  **Only use this method if the above doesn't work for you. This is almost certainly more difficult. The second method will allow you to pass paremeters to the script.**
 
   [Download my code](https://github.com/evenevan/export-ms-teams-chats/archive/refs/heads/main.zip). Then, extract the downloaded folder to wherever is convenient to you.
 
