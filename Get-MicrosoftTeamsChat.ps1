@@ -8,10 +8,10 @@
         This script reads the Microsoft Graph API and exports of chat history into HTML files in a location you specify.
 
     .PARAMETER exportFolder
-        If specified, only group chats this string (exact match) will be exported
+        Export location of where the HTML files will be saved. For example, "D:\ExportedHTML\"
 
     .PARAMETER toExport
-        Export location of where the HTML files will be saved. For example, "D:\ExportedHTML\"
+        If specified, only group chats this string (exact match) will be exported
 
     .PARAMETER avoidOverwrite
         If a chat with the same file name already exists, this will create the new file with a number at the end instead (such as (1))
@@ -23,7 +23,7 @@
         The tenant id. See https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-protocols-oidc#find-your-apps-openid-configuration-document-uri for possible tenants.
 
     .EXAMPLE
-        .\Get-MicrosoftTeamChat.ps1 -ExportFolder "D:\ExportedHTML" -clientId "31359c7f-bd7e-475c-86db-fdb8c937548e" -tenantId "contoso.onmicrosoft.com"
+        .\Get-MicrosoftTeamsChat.ps1 -exportFolder "D:\ExportedHTML" -clientId "31359c7f-bd7e-475c-86db-fdb8c937548e" -tenantId "contoso.onmicrosoft.com" -skipIds '19:c968a252f5dc4310bd6714883389dcfe@thread.v2'
 
     .NOTES
         Original Author: Trent Steenholdt
@@ -34,7 +34,8 @@
 [cmdletbinding()]
 Param(
     [Parameter(Mandatory = $false, HelpMessage = "Export location of where the HTML files will be saved.")] [string] $exportFolder = "out",
-    [Parameter(Mandatory = $false, HelpMessage = "If specified, only group chats this string (exact match) will be exported")] [string[]] $toExport = $null,
+    [Parameter(Mandatory = $false, HelpMessage = "If specified, only chats named (exact match) will be exported")] [string[]] $toExport = $null,
+    [Parameter(Mandatory = $false, HelpMessage = "Any chat IDs specified will be skipped")] [string[]] $skipIds = @(),
     [Parameter(Mandatory = $false, HelpMessage = "If a chat with the same file name already exists, this will create the new file with a number at the end instead (such as (1))")] [switch] $avoidOverwrite,
     [Parameter(Mandatory = $false, HelpMessage = "The client id of the Azure AD App Registration")] [string] $clientId = "7f586887-37d3-4d1f-89cf-153c7d1bbe54",
     [Parameter(Mandatory = $false, HelpMessage = "The tenant id of the Azure AD environment the user logs into")] [string] $tenantId = "organizations"
@@ -90,7 +91,12 @@ foreach ($chat in $chats) {
     $name = ConvertTo-ChatName $chat $members $me $clientId $tenantId
     
     if ($null -ne $toExport -and $toExport -notcontains $name) {
-        Write-Verbose ("$name is not in chats to export ($($toExport -join ", ")), skipping...")
+        Write-Host ("$name is not in chats to export ($($toExport -join ", ")), skipping...")
+        continue
+    }
+
+    if ($skipIds -contains $chat.id) {
+        Write-Host ("$name ($($chat.id)) is in the skip list, skipping...")
         continue
     }
 
