@@ -86,9 +86,12 @@ $chatIndex = 0
 foreach ($chat in $chats) {
     Write-Progress -Activity "Exporting Chats" -Status "Chat $($chatIndex) of $($chats.count)" -PercentComplete $(($chatIndex / $chats.count) * 100)
     $chatIndex += 1
+    
+    Write-Verbose "Exporting $($chat.id)"
 
     $members = Get-Members $chat $clientId $tenantId
     $name = ConvertTo-ChatName $chat $members $me $clientId $tenantId
+    
     
     if ($null -ne $toExport -and $toExport -notcontains $name) {
         Write-Host ("$name is not in chats to export ($($toExport -join ", ")), skipping...")
