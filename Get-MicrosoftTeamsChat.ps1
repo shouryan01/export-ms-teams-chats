@@ -37,8 +37,8 @@ Param(
     [Parameter(Mandatory = $false, HelpMessage = "If specified, only chats named (exact match) will be exported")] [string[]] $toExport = $null,
     [Parameter(Mandatory = $false, HelpMessage = "Any chat IDs specified will be skipped")] [string[]] $skipIds = @(),
     [Parameter(Mandatory = $false, HelpMessage = "If a chat with the same file name already exists, this will create the new file with a number at the end instead (such as (1))")] [switch] $avoidOverwrite,
-    [Parameter(Mandatory = $false, HelpMessage = "The client id of the Azure AD App Registration")] [string] $clientId = "2137212b-7aa5-4c9c-abb6-6d8a1aebf5cc",
-    [Parameter(Mandatory = $false, HelpMessage = "The tenant id of the Azure AD environment the user logs into")] [string] $tenantId = "0f634ac3-b39f-41a6-83ba-8f107876c692"
+    [Parameter(Mandatory = $false, HelpMessage = "The client id of the Azure AD App Registration")] [string] $clientId = "",
+    [Parameter(Mandatory = $false, HelpMessage = "The tenant id of the Azure AD environment the user logs into")] [string] $tenantId = ""
 )
 
 #################################
